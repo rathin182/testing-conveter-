@@ -25,8 +25,8 @@ model User {
   isSuspended   Boolean   @default(false)
   lastActiveAt  DateTime  @default(now())
 
-  phone         String?
-  bio           String?   @db.Text
+  phone String?
+  bio   String? @db.Text
 
   accounts             Account[]
   clientProfile        ClientProfile?
@@ -87,19 +87,20 @@ enum ExperienceLevel {
   EIGHT_PLUS_YEARS
 }
 
-model  EngineerProfile {
+model EngineerProfile {
   id     String @id @default(uuid())
   userId String @unique
 
-  status          ApprovalStatus @default(PENDING)
-  rejectionReason String?        @db.Text
-  qualification   Qualification
-  idType          IdType
-  idNumber        String
-  idFile          String
-  yearsOfExperience ExperienceLevel?
+  status                  ApprovalStatus   @default(PENDING)
+  rejectionReason         String?          @db.Text
+  qualification           Qualification
+  idType                  IdType
+  idNumber                String
+  idFile                  String
+  yearsOfExperience       ExperienceLevel?
+  yearsOfExperienceNumber Int? @default(0)
 
-  certifications    Json        @default("[]")
+  certifications    Json                        @default("[]")
   skills            String[]
   embedding         Unsupported("vector(768)")?
   completedProjects Int                         @default(0)
@@ -130,14 +131,14 @@ model Account {
 }
 
 model PayoutDetail {
-  id            String  @id @default(uuid())
-  userId        String  @unique
-  upiId         String?
-  accountNumber String?
-  ifscCode      String?
-  bankName      String?
-  accountHolder String?
-  preferredMethod String @default("UPI")
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  upiId           String?
+  accountNumber   String?
+  ifscCode        String?
+  bankName        String?
+  accountHolder   String?
+  preferredMethod String  @default("UPI")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -376,8 +377,8 @@ model ProjectMessage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sender  User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
 
 enum TicketType {
@@ -443,6 +444,10 @@ model Transaction {
   razorpaySignature String?
   razorpayRefundId  String? @unique
   razorpayPayoutId  String? @unique
+
+  payuTransactionId String? @unique
+  payuPaymentId     String? @unique
+  payuHash          String? @db.Text
 
   proof       String?
   completedAt DateTime?
